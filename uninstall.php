@@ -4,8 +4,6 @@
    *
    * @package   PukPun Hubs
    * @author    Deshario Sunil
-   * @license   MIT
-   * @link      [Your URL]
    */
 
 
