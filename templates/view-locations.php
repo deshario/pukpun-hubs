@@ -138,14 +138,7 @@
     let polygon = JSON.parse(data);
     
     jQuery('.viewModal').modal({
-        centered: false,
-        blurring: true,
-        onVisible: function () {
-          jQuery("body").css("margin-top", "-32px");
-        },
-        onHide: function(){
-          jQuery("body").css("margin-top", "0px");
-        },
+      centered: false,
     }).modal('show');
     
     jQuery('.modalTitle').text(locName);    
