@@ -1,4 +1,8 @@
   <?php
+    global $wpdb;
+    $settings_tbl = $wpdb->prefix.'pukpun_settings';
+    $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'map_api_key'");
+    $apiKey = $result->key_value;
 
     if(isset($_POST['update'])){
       updateLocation();
@@ -109,7 +113,7 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhHg4UMW0HIy9ZdBJfTQRrbkxz91APPi0&libraries=drawing"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?= $apiKey ?>&libraries=drawing"></script>
 
   <script type="module">
 

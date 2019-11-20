@@ -4,6 +4,10 @@
       $tbl_pp_location = $wpdb->prefix.'pukpun_locations';
       $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
       $tbl_pp_hubs_data = $wpdb->prefix.'pukpun_hubs_data';
+  
+      $settings_tbl = $wpdb->prefix.'pukpun_settings';
+      $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'map_api_key'");
+      $apiKey = $result->key_value;
       
       if(isset($_GET['hub_id'])){ // Single Hub
         $sqlQuery = "SELECT * FROM $tbl_pp_hubs_data 
@@ -83,7 +87,7 @@
   </div>
 </div>
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhHg4UMW0HIy9ZdBJfTQRrbkxz91APPi0&libraries=drawing"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?= $apiKey ?>&libraries=drawing"></script>
 
 <script type="module">
 

@@ -58,6 +58,18 @@
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryHubData);
     }
+
+    $tbl_pukpun_settings = $wpdb->prefix.'pukpun_settings';
+    if($wpdb->get_var("SHOW TABLES LIKE '$tbl_pukpun_settings'") != $tbl_pukpun_settings){
+      $querySetting = "CREATE TABLE $tbl_pukpun_settings (
+        key_id int(11) NOT NULL AUTO_INCREMENT,
+        key_name VARCHAR(255) NOT NULL,
+        key_value VARCHAR(255) NOT NULL,
+        UNIQUE KEY (key_id)
+      );";
+      require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+      dbDelta($querySetting);
+    }
     
   }
   register_activation_hook( __FILE__, 'init_pukpun_hubs_database' );
@@ -78,11 +90,14 @@
     );
     add_submenu_page( 
       null,
-      'My Custom Submenu Page',
-      'My Custom Submenu Page',
+      'Edit Location',
+      'Edit Location',
       'manage_options',
       'pukpun_location',
       'editLocation'
+    );
+    add_submenu_page(
+      'pukpun_hubs', 'PukPun Settings', 'Settings', 'manage_options', 'pukpun_settings', 'settings'
     );
   }
 
@@ -90,7 +105,7 @@
   function pukpun_hubs_style(){
     $page = isset($_GET['page']) ? $_GET['page'] : null;
     if($page != null){
-      if($page == 'pukpun_hubs' || $page == 'pukpun_hubs-new' || $page == 'pukpun_locations' || $page == 'pukpun_locations-new' || $page == 'pukpun_location'){
+      if($page == 'pukpun_hubs' || $page == 'pukpun_hubs-new' || $page == 'pukpun_locations' || $page == 'pukpun_locations-new' || $page == 'pukpun_location' || $page == 'pukpun_settings'){
         wp_register_style('semantic_ui_css', 'https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css', false, '1.0.0' );
         wp_enqueue_style('semantic_ui_css'); 
         wp_register_script('semantic_ui_js', 'https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js', null, null, true );
@@ -119,9 +134,8 @@
     include(plugin_dir_path( __FILE__ ).'/templates/edit-location.php');
   }
 
-  function initializeUI($menuType){
-    echo 'initializing UI : '.$menuType;
+  function settings(){
+    include(plugin_dir_path( __FILE__ ).'/templates/settings.php');
   }
   
-   
 ?>

@@ -1,4 +1,9 @@
 <?php
+  global $wpdb;
+  $settings_tbl = $wpdb->prefix.'pukpun_settings';
+  $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'map_api_key'");
+  $apiKey = $result->key_value;
+
   if(isset($_POST['create'])){
     submitLocation();
   }
@@ -39,9 +44,9 @@
       $location_data   = $_POST['locationData'];
       $wpdb->insert($tbl_pp_location,
         array(
-            'location_name' => $location_name,
-            'location_data' => $location_data,
-            'location_created_at' => date("Y-m-d"),
+          'location_name' => $location_name,
+          'location_data' => $location_data,
+          'location_created_at' => date("Y-m-d"),
         ),
         array('%s','%s','%s')
       );
@@ -96,7 +101,7 @@
    </div>
 </div>
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhHg4UMW0HIy9ZdBJfTQRrbkxz91APPi0&libraries=drawing"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?= $apiKey ?>&libraries=drawing"></script>
       
 <script type="module">
 
@@ -154,18 +159,6 @@
     let latLongData = getJSONString(drawingData);
     jQuery("textarea#hub_data").val(latLongData);
 
-    // google.maps.event.addListener(event.overlay.getPath(), 'set_at', function(index, obj) {
-
-    //   let currentData = JSON.parse(JSON.stringify(drawingData));
-    //   let newData = JSON.parse(JSON.stringify(obj));
-    //   const updatedDrawingData = Object.assign([], currentData, {[index]: newData});
-
-    //   let updatedLatLong = getJSONString(updatedDrawingData);
-    //   jQuery("textarea#hub_data").val(updatedLatLong);
-
-    // });
-
-
     let mPaths = event.overlay.getPath();
 
     google.maps.event.addListener(mPaths, 'set_at', processVertex);
@@ -178,13 +171,12 @@
           let vertex = this.getAt(i).toUrlValue(6);
           let splited = vertex.split(",");
           let latlng = {
-              lat:splited[0],
-              lng:splited[1]
+            lat:splited[0],
+            lng:splited[1]
           }
           latlongArr.push(latlng);
       }
       let verifiedLatlng = getJSONString(latlongArr);
-      // console.log(verifiedLatlng);
       jQuery("textarea#hub_data").val(verifiedLatlng);
     }
 
