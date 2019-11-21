@@ -101,34 +101,38 @@
   const getParsedData = (response) => {
     let finalTotalHubs = JSON.parse(response); 
     var pukpunHubs = [];
-    finalTotalHubs.forEach((singleDate) => {
-      let parsedData = singleDate.data.map((eachData) => {
-        let data = '{"data":['+eachData.replace(/(lat|lng)/g, '"$1"')+']}';
-        let result = JSON.parse(data);
-        return result;
+    finalTotalHubs.forEach((eachHub) => {
+      let locationData = eachHub.data.map((eachLocation) => {
+        let data = '{"data":['+eachLocation.data.replace(/(lat|lng)/g, '"$1"')+']}';
+        let locationData = {
+          id : eachLocation.id,
+          name : eachLocation.name,
+          data : JSON.parse(data)
+        };
+        return locationData;
       });
       pukpunHubs.push({
-        name : singleDate.name,
-        latlong : singleDate.coordinate,
-        data : parsedData
+        name : eachHub.name,
+        latlong : eachHub.coordinate,
+        locations : locationData
       });
     });
     return pukpunHubs;
   }
 
-const fetchData = () => {
-  jQuery.ajax({
-    url: "<?php echo plugin_dir_url(__DIR__).'query.php'; ?>",
-    type: "GET",
-    success: function (response){
-      let data = getParsedData(response);
-      console.log(data);
-      alert('Please check console');
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      console.log(textStatus, errorThrown);
-    }
-  });
-}
+  const fetchData = () => {
+    jQuery.ajax({
+      url: "<?php echo plugin_dir_url(__DIR__).'query.php'; ?>",
+      type: "GET",
+      success: function (response){
+        let data = getParsedData(response);
+        console.log(data);
+        alert('Please check console');
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      }
+    });
+  }
 
 </script>

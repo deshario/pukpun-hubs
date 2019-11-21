@@ -22,9 +22,14 @@
         WHERE $hubs_data.hub_id = ".$eachHub->hub_id;
 
       $allLocations = array();
+
       $eachHubData = $wpdb->get_results($sqlQuery);
       foreach($eachHubData as $data){
-        array_push($allLocations,$data->location_data);
+        $hubLocation = array();
+        $hubLocation['id'] = $data->location_id;
+        $hubLocation['name'] = $data->location_name;
+        $hubLocation['data'] = $data->location_data;
+        array_push($allLocations,$hubLocation);
       }
 
       $myHubs = new stdClass();  
