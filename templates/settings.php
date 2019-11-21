@@ -6,6 +6,23 @@
   $btnText = $oldKey == '' ? 'Save' : 'Update';
   $btnClass = $oldKey == '' ? 'primary' : 'green';
 
+  if($oldKey == ''){
+    showNotification('API KEY REQUIRED','Enter key to make hubs and locations working properly.');
+  }
+
+  function showNotification($title,$message){ 
+    echo "
+    <div class='ui icon info message' style='width:99%;'>
+      <i class='cog icon'></i>
+      <div class='content'>
+        <div class='header'>$title</div>
+        <div class='description' style='margin-top:5px;'>$message</div>
+      </div>
+      <i class='close icon'></i>
+    </div> 
+    ";
+  }
+
   if(isset($_POST['save_btn'])){
     $apikey = isset($_POST['api_key']) ? $_POST['api_key'] : null;
     if($apikey != null){
@@ -64,6 +81,9 @@
 
   jQuery(document).ready(() => {
     jQuery('.menu .item').tab();
+    jQuery('.message .close').on('click', function() {
+      jQuery(this).closest('.message').transition('fade');
+    });
   });
 
   const getParsedData = (response) => {
