@@ -6,6 +6,18 @@
   $btnText = $oldKey == '' ? 'Save' : 'Update';
   $btnClass = $oldKey == '' ? 'primary' : 'green';
 
+  $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'query_api'");
+  $query_api = $result->key_value;
+  $query_api_value = plugin_dir_url(__DIR__).'query.php';
+  if($query_api == ''){
+    $wpdb->insert($settings_tbl,array(
+      'key_name' => 'query_api',
+      'key_value' => $query_api_value,
+    ),array('%s','%s'));
+  }else{
+    $wpdb->update($settings_tbl, array('key_value' => $query_api_value), array('key_name' => 'query_api') );
+  }
+
   if($oldKey == ''){
     showNotification('API KEY REQUIRED','Enter key to make hubs and locations working properly.');
   }
@@ -67,7 +79,7 @@
             <div class="field">
                <label>Data Source</label>
                <div class="ui action input">
-                  <input type="text" value="<?= plugin_dir_url(__DIR__).'query.php';?>"/>
+                  <input type="text" value="<?= plugin_dir_url(__DIR__).'query.php';?>" readonly/>
                   <div class="ui primary button" style="height:38px" onclick="fetchData()">Execute</div>
                </div>
             </div>
