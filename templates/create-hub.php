@@ -5,14 +5,25 @@
          global $wpdb;
          $ids = $_POST['locations_ids'];
          $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
+
+         $pdf = $_FILES['hubCover'];
+         $uploadedMediaId = media_handle_upload('hubCover',0); // return int | media ID
+         if(is_wp_error($uploadedMediaId)){
+            echo "Error uploading file: " . $uploadedMediaId->get_error_message().'<br/>';
+         }
+         
          $wpdb->insert($tbl_pp_hubs,
             array(
                'hub_name' => $_POST['hubName'],
                'hub_coordinate' => $_POST['hubCoordinate'],
                'hub_created_at' => date("Y-m-d"),
+               'hub_address' => $_POST['hubAddress'],
+               'hub_opening' => $_POST['hubOpening'],
+               'hub_cover' => $uploadedMediaId
             ),
             array('%s','%s','%s')
          );
+
          $insertedHubID = $wpdb->insert_id;
          if($insertedHubID != 0){ // Save Success
             $allHubData = array();
@@ -115,7 +126,7 @@
 
 <div class="ui grid" style="margin-top:10px; padding-right:5px; margin-right:0;">
    <div class="wide column">
-      <form method="post" id="hubForm" action="#">
+      <form method="post" id="hubForm" action="#" enctype="multipart/form-data">
          <div class="ui card fluid">
             <div class="content">
                <i class="map marker alternate icon"></i>Create Hub
@@ -140,6 +151,18 @@
                            }
                         ?>
                      </select>
+                  </div>
+                  <div class="field">
+                     <label>Hub Address</label>
+                     <textarea rows="2" name="hubAddress" style="resize:none" required></textarea>
+                  </div>
+                  <div class="field">
+                     <label>Hub Opening Time</label>
+                     <input type="text" name="hubOpening" placeholder="06.00 - 18.00" required/>
+                  </div>
+                  <div class="field">
+                     <label>Hub Cover</label>
+                     <input type="file" name="hubCover" accept="image/*" required/>
                   </div>
                   <input type="hidden" id="locations_ids" name="locations_ids"/>
                   <input type="submit" name="createHub" class="ui right floated primary button" style="padding-top:7px;" />

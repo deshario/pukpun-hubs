@@ -27,6 +27,9 @@
         hub_coordinate VARCHAR(255) NOT NULL,
         hub_created_at date DEFAULT NULL,
         hub_updated_at date DEFAULT NULL,
+        hub_address text NOT NULL,
+        hub_cover int(11) NOT NULL,
+        hub_opening VARCHAR(255) NOT NULL,
         UNIQUE KEY (hub_id)
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

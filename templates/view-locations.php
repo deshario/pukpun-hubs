@@ -8,6 +8,19 @@
       $settings_tbl = $wpdb->prefix.'pukpun_settings';
       $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'map_api_key'");
       $apiKey = $result->key_value;
+
+      function renderNotification($title,$message){
+        echo "
+          <div class='ui icon info message' style='width:98%;'>
+            <i class='exclamation icon'></i>
+            <div class='content'>
+              <div class='header'>$title</div>
+              <div class='description' style='margin-top:5px;'>$message</div>
+            </div>
+            <i class='close icon'></i>
+          </div> 
+        ";
+      }
       
       if(isset($_GET['hub_id'])){ // Single Hub
         $sqlQuery = "SELECT * FROM $tbl_pp_hubs_data 
@@ -15,8 +28,19 @@
           INNER JOIN $tbl_pp_location ON $tbl_pp_location.location_id = $tbl_pp_hubs_data.location_id
           WHERE $tbl_pp_hubs_data.hub_id = ".$_GET['hub_id'];
         $locations = $wpdb->get_results($sqlQuery);
+        if(count($locations) <= 0){
+          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
+          renderNotification('Invalid Location','Something went wrong !');
+          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
+        }
       }else{
         $locations = $wpdb->get_results("SELECT * FROM $tbl_pp_location");
+        if(count($locations) <= 0){
+          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
+          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
+          $msg = "Click <a href='#' onclick='createLocation(".$createLocationUrl.")'>here</a> to create your first location";
+          renderNotification('Location Not Found',$msg);
+        }
       }
 
       $mIndex = 0;
@@ -97,7 +121,15 @@
     jQuery('.special.cards .image').dimmer({
       on: 'hover'
     });
+    jQuery('.message .close').on('click', function() {
+      jQuery(this).closest('.message').transition('fade');
+      window.location.href = createLocationUrl;
+    });
   });
+ 
+  window.createLocation = function(createUrl){
+    window.location.href = createUrl;
+  }
 
   window.deleteLocNow = function(){
     let location_id = jQuery(".confirmDelete").attr("location_id");
