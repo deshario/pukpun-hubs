@@ -141,4 +141,11 @@
     include(plugin_dir_path( __FILE__ ).'/templates/settings.php');
   }
   
+  add_shortcode('pukpun_hubs', 'view_pukpun_hubs');
+  function view_pukpun_hubs(){
+    ob_start();
+    include(plugin_dir_path( __FILE__ ).'/shortcode/view_pukpun_hubs.php');
+    $layout = ob_get_clean();
+    return $layout;
+  }
 ?>
