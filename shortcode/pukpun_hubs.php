@@ -3,6 +3,9 @@
   wp_register_style('semantic_ui_css', 'https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css', false, '1.0.0' );
   wp_enqueue_style('semantic_ui_css');
 
+  wp_register_style('pukpun_css', plugin_dir_url( __FILE__ ).'../assets/css/pukpun_hubs.css', false, '1.0.0' );
+  wp_enqueue_style('pukpun_css');
+
   global $wpdb;
   $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
   $hubs = $wpdb->get_results("SELECT * FROM $tbl_pp_hubs");
@@ -22,36 +25,23 @@
   foreach($hubs as $hub){
       $img_atts = wp_get_attachment_image_src($hub->hub_cover,'adv-pos-a-large');
       $layout .= "
-          <div class='ui card fluid' style='
-              margin-bottom:30px;
-              -webkit-box-shadow:0 0 10px rgba(0,0,0,0.8);
-              -moz-box-shadow:0 0 10px rgba(0,0,0,0.8);
-              box-shadow:0 0 10px rgba(0,0,0,0.8);
-          '>
+          <div class='ui card fluid pukpun-card'>
               <div class='ui grid'>
                   <div class='five wide column'>
                       <div class='content'>
-                          <p align='center'
-                              style='font-weight: 700; font-size: 1.28em; margin-top: 10px; line-height: 1.28em;'>
-                              $hub->hub_name
+                          <p align='center' class='pukpun-title'>$hub->hub_name</p>
+                          <div class='ui clearing divider pukpun-divider'></div>
+                          <p class='ml15'>ที่อยู่<br/>
+                              <label class='ml15'>$hub->hub_address</label>
                           </p>
-                      
-                          <div class='ui clearing divider' style='margin-right:-30px;'></div>
-                          
-                          <p style='margin-left:15px;'>ที่อยู่<br/>
-                              <label style='margin-left:15px;'>$hub->hub_address</label>
+                          <p class='ml15'>สามารถรับน้ำได้<br/>
+                              <label class='ml15'>จันทร์ – ศุกร์ เวลา $hub->hub_opening</label>
                           </p>
-
-                          <p style='margin-left:15px;'>สามารถรับน้ำได้<br/>
-                              <label style='margin-left:15px;'>จันทร์ – ศุกร์ เวลา $hub->hub_opening</label>
-                          </p>
-                          
-                          <img style='margin-left:13px;' src='$img_atts[0]'/>
-
+                          <img class='mlb13' src='$img_atts[0]'/>
                       </div>
                   </div>
                   <div class='ten wide column'>
-                      <div id='map_$iterator' style='width: 100.5%; height: 430px;'></div>
+                      <div id='map_$iterator' class='pukpun-map'></div>
                   </div>
               </div>
           </div>
