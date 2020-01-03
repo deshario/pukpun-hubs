@@ -26,15 +26,23 @@
     $isFormOk = false;
     $tbl_pp_location = $wpdb->prefix.'pukpun_locations';
 
-    if(isset($_POST['locationName']) && isset($_POST['locationData'])){
-      if($_POST['locationData'] == ''){
-        handleError("Polygon data can't be empty !");
+    if(isset($_POST['locationName']) && isset($_POST['locationData']) && isset($_POST['attachedHub'])){
+      $attachedHub = $_POST['attachedHub'];
+      $locationData = $_POST['locationData'];
+      if($attachedHub == '' && $locationData == ''){
+        handleError('All fields are required');
       }else{
-        $countName = $wpdb->get_var("SELECT COUNT(*) FROM $tbl_pp_location WHERE location_name = '".$_POST['locationName']."'");
-        if($countName > 0){
-          handleError("The location name already exists.");
+        if($attachedHub == ''){
+          handleError("Hub Not Attached");
+        }else if($locationData == ''){
+          handleError("Polygon data can't be empty !");
         }else{
-          $isFormOk = true;
+          $countName = $wpdb->get_var("SELECT COUNT(*) FROM $tbl_pp_location WHERE location_name = '".$_POST['locationName']."'");
+          if($countName > 0){
+            handleError("The location name already exists.");
+          }else{
+            $isFormOk = true;
+          }
         }
       }
     }
@@ -47,14 +55,15 @@
           'location_name' => $location_name,
           'location_data' => $location_data,
           'location_created_at' => date("Y-m-d"),
+          'hub_id' => $attachedHub,
         ),
-        array('%s','%s','%s')
+        array('%s','%s','%s','%s')
       );
-    wp_redirect(admin_url('/admin.php?page=pukpun_locations'));
-  }else{
-    echo "<script>console.log('No POST')</script>";
+      wp_redirect(admin_url('/admin.php?page=pukpun_locations'));
+    }else{
+      echo "<script>console.log('No POST')</script>";
+    }
   }
-}
 
 ?>
 
@@ -70,7 +79,20 @@
             <div class="ui form">
                <div class="field">
                   <label>Location Name</label>
-                  <input type="text" name="locationName" placeholder="RM1" required/>
+                  <input type="text" name="locationName" placeholder="" required/>
+               </div>
+               <div class="field">
+                  <label>Attach Hub</label>
+                  <select name="attachedHub" class="label ui selection fluid dropdown">
+                    <option value="">Select Hub</option>
+                    <?php
+                      $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
+                      $pukpunHubData = $wpdb->get_results("SELECT * FROM $tbl_pp_hubs");
+                        foreach($pukpunHubData as $eachLocation){
+                          echo "<option value='$eachLocation->hub_id'>".$eachLocation->hub_name."</option>";
+                        }
+                    ?>
+                  </select>
                </div>
                <div class="field">
                   <label>Draw Polygon</label>
@@ -113,6 +135,11 @@
   }
 
   jQuery(document).ready(() => { 
+
+    jQuery('.label.ui.dropdown').dropdown();
+    jQuery('.no.label.ui.dropdown').dropdown({
+        useLabels: false
+    });
 
     jQuery('.ui.accordion').accordion({
       collapsible: true,

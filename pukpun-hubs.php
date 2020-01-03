@@ -38,25 +38,29 @@
 
     $tbl_pukpun_location = $wpdb->prefix.'pukpun_locations';
     if($wpdb->get_var("SHOW TABLES LIKE '$tbl_pukpun_location'") != $tbl_pukpun_location){
+      $hubTbl = $wpdb->prefix.'pukpun_hubs';
       $queryLocation = "CREATE TABLE $tbl_pukpun_location (
         location_id int(11) NOT NULL AUTO_INCREMENT,
         location_name VARCHAR(255) NOT NULL,
         location_data text NOT NULL,
         location_created_at date DEFAULT NULL,
         location_updated_at date DEFAULT NULL,
+        hub_id int,
+        FOREIGN KEY (hub_id) REFERENCES $hubTbl(hub_id),
         UNIQUE KEY (location_id)
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryLocation);
     }
 
-    $tbl_pukpun_hub_data = $wpdb->prefix.'pukpun_hubs_data';
-    if($wpdb->get_var("SHOW TABLES LIKE '$tbl_pukpun_hub_data'") != $tbl_pukpun_hub_data){
-      $queryHubData = "CREATE TABLE $tbl_pukpun_hub_data (
-        id int(11) NOT NULL AUTO_INCREMENT,
-        hub_id int(11) NOT NULL,
-        location_id int(11) NOT NULL,
-        UNIQUE KEY (id)
+    $tbl_pukpun_log = $wpdb->prefix.'pukpun_logs';
+    if($wpdb->get_var("SHOW TABLES LIKE '$tbl_pukpun_log'") != $tbl_pukpun_log){
+      $queryHubData = "CREATE TABLE $tbl_pukpun_log (
+        log_id int(11) NOT NULL AUTO_INCREMENT,
+        log_location VARCHAR(255) NOT NULL,
+        log_latlng VARCHAR(255) NOT NULL,
+        log_created VARCHAR(255) NOT NULL,
+        UNIQUE KEY (log_id)
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryHubData);
@@ -91,13 +95,8 @@
     add_submenu_page(
       'pukpun_hubs', 'New PukPun Location', 'New Location', 'manage_options', 'pukpun_locations-new', 'manageLocation'
     );
-    add_submenu_page( 
-      null,
-      'Edit Location',
-      'Edit Location',
-      'manage_options',
-      'pukpun_location',
-      'editLocation'
+    add_submenu_page(
+      'pukpun_hubs', 'Request Logs', 'Request Logs', 'manage_options', 'pukpun_logs', 'logs'
     );
     add_submenu_page(
       'pukpun_hubs', 'PukPun Settings', 'Settings', 'manage_options', 'pukpun_settings', 'settings'
@@ -108,7 +107,7 @@
   function pukpun_hubs_style(){
     $page = isset($_GET['page']) ? $_GET['page'] : null;
     if($page != null){
-      if($page == 'pukpun_hubs' || $page == 'pukpun_hubs-new' || $page == 'pukpun_locations' || $page == 'pukpun_locations-new' || $page == 'pukpun_location' || $page == 'pukpun_settings'){
+      if($page == 'pukpun_hubs' || $page == 'pukpun_hubs-new' || $page == 'pukpun_locations' || $page == 'pukpun_locations-new' || $page == 'pukpun_editer' || $page == 'pukpun_settings' || $page == 'pukpun_logs'){
         wp_register_style('semantic_ui_css', 'https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css', false, '1.0.0' );
         wp_enqueue_style('semantic_ui_css'); 
         wp_register_script('semantic_ui_js', 'https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js', null, null, true );
@@ -118,23 +117,35 @@
   }
 
   function view_hubs(){
-    include(plugin_dir_path( __FILE__ ).'/templates/view-hubs.php');
+    if(isset($_GET['editHub'])){
+      include(plugin_dir_path( __FILE__ ).'/templates/edit-hub.php');
+    }else{
+      include(plugin_dir_path( __FILE__ ).'/templates/view-hubs.php');
+    }
   }
 
   function viewLocation(){
-    include(plugin_dir_path( __FILE__ ).'/templates/view-locations.php');
+    if(isset($_GET['editLocation'])){
+      include(plugin_dir_path( __FILE__ ).'/templates/edit-location.php');
+    }else{
+      include(plugin_dir_path( __FILE__ ).'/templates/view-locations.php');
+    }
   }
 
   function manageHub(){
     include(plugin_dir_path( __FILE__ ).'/templates/create-hub.php');
   }
 
+  function editHub(){
+    include(plugin_dir_path( __FILE__ ).'/templates/edit-hub.php');
+  }
+
   function manageLocation(){
     include(plugin_dir_path( __FILE__ ).'/templates/create-location.php');
   }
-
-  function editLocation(){
-    include(plugin_dir_path( __FILE__ ).'/templates/edit-location.php');
+      
+  function logs(){
+    include(plugin_dir_path( __FILE__ ).'/templates/logs.php');
   }
 
   function settings(){

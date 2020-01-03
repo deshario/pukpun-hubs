@@ -5,30 +5,25 @@
   global $wpdb;
 
   $hubs = $wpdb->prefix.'pukpun_hubs';
-  $hubs_data = $wpdb->prefix.'pukpun_hubs_data';
   $locations = $wpdb->prefix.'pukpun_locations';
 
   $finalHubs = array();
   $hubsOnly = $wpdb->get_results("SELECT * FROM $hubs");
 
-  foreach($hubsOnly as $eachHub){
-    $ifHubHaveData = $wpdb->get_var("SELECT COUNT(*) FROM $hubs_data WHERE hub_id=$eachHub->hub_id");
+  $allLocations = array();
 
+  foreach($hubsOnly as $eachHub){
+    
+    $ifHubHaveData = $wpdb->get_var("SELECT COUNT(*) FROM $locations WHERE $locations.hub_id=$eachHub->hub_id");
     if($ifHubHaveData > 0){
 
-      $sqlQuery = "SELECT * FROM $hubs_data 
-        INNER JOIN $hubs ON $hubs.hub_id = $hubs_data.hub_id
-        INNER JOIN $locations ON $locations.location_id = $hubs_data.location_id
-        WHERE $hubs_data.hub_id = ".$eachHub->hub_id;
-
-      $allLocations = array();
-
+      $sqlQuery = "SELECT * FROM $locations WHERE $locations.hub_id = ".$eachHub->hub_id;
       $eachHubData = $wpdb->get_results($sqlQuery);
       foreach($eachHubData as $data){
         $hubLocation = array();
-        $hubLocation['id'] = $data->location_id;
-        $hubLocation['name'] = $data->location_name;
-        $hubLocation['data'] = $data->location_data;
+        $hubLocation['location_id'] = $data->location_id;
+        $hubLocation['location_name'] = $data->location_name;
+        $hubLocation['location_data'] = $data->location_data;
         array_push($allLocations,$hubLocation);
       }
 

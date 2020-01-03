@@ -1,4 +1,4 @@
-<div class="ui special cards" style="margin-top:10px;">
+<div class="ui special cards" style="">
    <?php
       global $wpdb;
       $tbl_pp_location = $wpdb->prefix.'pukpun_locations';
@@ -21,42 +21,23 @@
           </div> 
         ";
       }
-      
-      if(isset($_GET['hub_id'])){ // Single Hub
-        $sqlQuery = "SELECT * FROM $tbl_pp_hubs_data 
-          INNER JOIN $tbl_pp_hubs ON $tbl_pp_hubs.hub_id = $tbl_pp_hubs_data.hub_id
-          INNER JOIN $tbl_pp_location ON $tbl_pp_location.location_id = $tbl_pp_hubs_data.location_id
-          WHERE $tbl_pp_hubs_data.hub_id = ".$_GET['hub_id'];
-        $locations = $wpdb->get_results($sqlQuery);
-        if(count($locations) <= 0){
-          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
-          renderNotification('Invalid Location','Something went wrong !');
-          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
-        }
-      }else{
-        $locations = $wpdb->get_results("SELECT * FROM $tbl_pp_location");
-        if(count($locations) <= 0){
-          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
-          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
-          $msg = "Click <a href='#' onclick='createLocation(".$createLocationUrl.")'>here</a> to create your first location";
-          renderNotification('Location Not Found',$msg);
-        }
-      }
 
-      $mIndex = 0;
-      echo "<script>
-        var location_name=[];
-        var location_data=[];
-      </script>";
-      foreach($locations as $location){ 
-        $location_data_string = json_encode($location->location_data);
-        $location_name_string = json_encode($location->location_name);
+      function renderTabData($locations){
+        $mIndex = 0;
         echo "<script>
-          location_name[$mIndex] = $location_name_string;
-          location_data[$mIndex] = $location_data_string;
-        </script>";
-      ?>
-        <div class="ui card">
+          var location_name=[];
+          var location_data=[];
+        </script>"; 
+        foreach($locations as $location){ 
+          $location_data_string = json_encode($location->location_data);
+          $location_name_string = json_encode($location->location_name);
+          echo "<script>
+            location_name[$mIndex] = $location_name_string;
+            location_data[$mIndex] = $location_data_string;
+          </script>";
+          $hubIdentifier = $location->hub_id == NULL ? 'border:1px solid #F44336' : '';
+        ?>
+        <div class="ui card" style="<?= $hubIdentifier; ?>">
             <div class="blurring dimmable image">
               <div class="ui dimmer">
                   <div class="content">
@@ -91,7 +72,55 @@
             </div>
 
         </div>
-   <?php $mIndex++; } ?>
+        <?php 
+        $mIndex++; }
+      }
+
+      $singleHub = '';
+
+      if(isset($_GET['hub_id'])){ // Single Hub
+        $sqlQuery = "SELECT * FROM $tbl_pp_location 
+          INNER JOIN $tbl_pp_hubs ON $tbl_pp_hubs.hub_id = $tbl_pp_location.hub_id
+          WHERE $tbl_pp_location.hub_id = ".$_GET['hub_id'];
+        $locations = $wpdb->get_results($sqlQuery);
+        if(count($locations) <= 0){
+          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
+          renderNotification('Invalid Location','Something went wrong !');
+          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
+        }else{
+          $singleHub = $locations[0]->hub_name;
+        }
+      }else{
+        $locations = $wpdb->get_results("SELECT * FROM $tbl_pp_location");
+        if(count($locations) <= 0){
+          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
+          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
+          $msg = "Click <a href='#' onclick='createLocation(".$createLocationUrl.")'>here</a> to create your first location";
+          renderNotification('Location Not Found',$msg);
+        }
+      }
+
+      if($singleHub != ''){
+          echo "
+            <div class='ui segment' style='width:99%; margin-top: 25px; margin-right: 20px;'>
+            <h2 class='ui left floated header' style='padding-left:10px;'>$singleHub Locations</h2>
+            <div class='ui clearing divider'></div>
+            <div class='ui cards' style='padding-left: 10px; padding-right: 5px;'>
+          ";
+      }else{
+          echo "
+            <div class='ui segment' style='width:99%; margin-top: 25px; margin-right: 20px;'>
+            <h2 class='ui left floated header' style='padding-left:10px;'>Locations</h2>
+            <div class='ui clearing divider'></div>
+            <div class='ui cards' style='padding-left: 10px; padding-right: 5px;'>
+          ";
+      }
+  ?>
+
+  <?= renderTabData($locations); ?>
+
+</div>
+</div>
 </div>
 
 <div class="ui modal viewModal">
@@ -118,6 +147,17 @@
   import uberMapStyle from "<?php echo plugin_dir_url( __FILE__ ).'../assets/js/mapStyle.js'; ?>";
 
   jQuery(document).ready(() => {
+
+    jQuery('.menu .item').tab();
+
+    jQuery('.top.menu .attachedTab').tab({
+      'onVisible':function(){
+        alert("Called")
+        filterSelection('unattachedHub');
+      }
+    });
+    
+
     jQuery('.special.cards .image').dimmer({
       on: 'hover'
     });
@@ -126,6 +166,49 @@
       window.location.href = createLocationUrl;
     });
   });
+
+
+
+
+
+
+  window.filterSelection = function(c) {
+  var x, i;
+  x = document.getElementsByClassName("carditem");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+window.w3AddClass = function(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {
+      // element.className += " " + arr2[i];
+      element.style.display = 'block';
+    }
+  }
+  console.log('Adding Class');
+}
+
+window.w3RemoveClass = function(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);     
+    }
+  }
+  element.className = arr1.join(" ");
+  element.style.display = 'none';
+  console.log('removed');
+}
+
  
   window.createLocation = function(createUrl){
     window.location.href = createUrl;
@@ -163,7 +246,7 @@
   }
 
   window.updateLoc = function(locationID){
-    let url = "<?php echo admin_url('admin.php?page=pukpun_location'); ?>";
+    let url = "<?php echo admin_url('admin.php?page=pukpun_locations'); ?>";
     url = url+"&editLocation="+locationID;
     window.location.href = url;
   }

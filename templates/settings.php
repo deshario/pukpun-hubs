@@ -103,10 +103,10 @@
     var pukpunHubs = [];
     finalTotalHubs.forEach((eachHub) => {
       let locationData = eachHub.data.map((eachLocation) => {
-        let data = '{"data":['+eachLocation.data.replace(/(lat|lng)/g, '"$1"')+']}';
+        let data = '{"data":['+eachLocation.location_data.replace(/(lat|lng)/g, '"$1"')+']}';
         let locationData = {
-          id : eachLocation.id,
-          name : eachLocation.name,
+          id : eachLocation.location_id,
+          name : eachLocation.location_name,
           data : JSON.parse(data)
         };
         return locationData;

@@ -29,3 +29,10 @@
   width: 100.5% !important;
   height: 100% !important;
 }
+
+.show {
+  display: block;
+}
+.defaultHide {
+  display:none;
+}
