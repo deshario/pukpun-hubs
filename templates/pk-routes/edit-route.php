@@ -55,7 +55,7 @@
           ),array('location_id' => $location_id)
         );
         if($result == true){
-          wp_redirect(admin_url('/admin.php?page=pukpun_locations'));
+          wp_redirect(admin_url('/admin.php?page=pukpun_routes'));
         }else if($result == 0){
           showNoti('warning','Update Error','bell outline','No rows affected');
         }else{
@@ -65,13 +65,13 @@
     
     }
 
-    $editLocationID = isset($_GET['editLocation']) ? $_GET['editLocation'] : null;
-    if($editLocationID == null){
+    $editRouteID = isset($_GET['editRoute']) ? $_GET['editRoute'] : null;
+    if($editRouteID == null){
       echo "<script>alert('Invalid Access')</script>";
     }else{ 
       global $wpdb;
       $tbl_pp_location = $wpdb->prefix.'pukpun_locations';
-      $foundLocation = $wpdb->get_row("SELECT * FROM $tbl_pp_location WHERE location_id = $editLocationID");
+      $foundLocation = $wpdb->get_row("SELECT * FROM $tbl_pp_location WHERE location_id = $editRouteID");
       if($foundLocation == null && $foundLocation == ''){
         echo "<script>
           alert('Invalid location id');
@@ -91,7 +91,7 @@
         <form method="post" action="">
           <div class="ui card fluid">
               <div class="content">
-                <i class="map marker alternate icon"></i>Edit Location
+                <i class="map marker alternate icon"></i>Edit Route
               </div>
               <div class="content">
                 <div class="ui form">
@@ -151,7 +151,7 @@
 
   <script type="module">
 
-    import BlitzMap from "<?php echo plugin_dir_url( __FILE__ ).'../assets/js/blitzMap.js'; ?>";
+    import BlitzMap from "<?php echo plugin_dir_url( __FILE__ ).'../../assets/js/blitzMap.js'; ?>";
 
     let data = '{"data":['+location_data.replace(/(lat|lng)/g, '"$1"')+']}';
     let polygon = JSON.parse(data);

@@ -1,4 +1,4 @@
-<div class="ui special cards" style="margin-top:10px;">
+<div class="ui cards">
    <?php
       global $wpdb;
       $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
@@ -6,32 +6,25 @@
       $tbl_pp_locations = $wpdb->prefix.'pukpun_locations';
       $hubs = $wpdb->get_results("SELECT * FROM $tbl_pp_hubs");
 
-      $createHubUrl = '"'.admin_url('/admin.php?page=pukpun_hubs-new').'"';
-
       if(count($hubs) <= 0){
-        echo "<script>var createHubUrl = ".$createHubUrl."</script>";
         echo "
-          <div class='ui icon info message' style='width:98%;'>
-            <i class='exclamation icon'></i>
-            <div class='content'>
-              <div class='header'>Hub Not Found</div>
-              <div class='description' style='margin-top:5px;'>Click <a href='#' onclick='createHub(".$createHubUrl.")'>here</a> to create your first hub</div>
-            </div>
-            <i class='close icon'></i>
-          </div> 
+          <h2 class='ui center aligned icon header' style='margin-top:25px;'>
+            <i class='bullhorn icon'></i> Hub Not Found
+          </h2>
         ";
       }
+
       echo "<script>var location_data = [];</script>";
 
-      echo "
-        <div class='ui segment' style='width:99%; margin-top: 1px; margin-right: 20px;'>
-        <h2 class='ui left floated header' style='padding-left:10px;'>PukPun Hubs</h2>
-        <div class='ui clearing divider'></div>
-        <div class='ui cards' style='padding-left: 10px; padding-right: 5px;'>
-      ";
-
       foreach($hubs as $hub){
-        $countLocation = $wpdb->get_var("SELECT COUNT(*) FROM $tbl_pp_locations WHERE hub_id=$hub->hub_id");
+        $countRoutes = $wpdb->get_var("SELECT COUNT(*) FROM $tbl_pp_locations WHERE hub_id=$hub->hub_id AND isPrecarious = '0'");
+        $routeLabel = '';
+        if($countRoutes <= 1){
+          $routeLabel = $countRoutes.' Route';
+        }else{
+          $routeLabel = $countRoutes.' Routes';
+        }
+
         $cover = wp_get_attachment_image_src($hub->hub_cover, 'adv-pos-a-large');
         $data = json_encode($hub);
         echo "<script>location_data[$hub->hub_id] = $data;</script>";
@@ -53,13 +46,12 @@
             <a class="header" onclick="viewHubWithModal(<?= $hub->hub_id; ?>)"><?= $hub->hub_name;?></a>
           </div>
           <div class="extra content">
-          <a><i class="map marker alternate icon"></i><?= $countLocation; ?> Locations</a>
+          <a><i class="map marker alternate icon"></i><?= $routeLabel; ?></a>
           <a style="float:right"><?= $hub->hub_opening;?></a>
           </div>
         </div>
+        
    <?php } ?>
-</div>
-</div>
 </div>
 
 <div class="ui modal deleteHub">
@@ -92,7 +84,7 @@
         <p>
           <button class="button" id='viewAttachedLocation'>
             <i class="map marker alternate icon"></i>
-            View attached locations
+            View attached routes
           </button>
         </p>
     </div>
@@ -107,14 +99,10 @@
       if(clickedId == 'blurThing'){
         console.log('blur');
       }
-  });
-   
-    jQuery('.special.cards .image').dimmer({
-      on: 'hover'
     });
-    jQuery('.message .close').on('click', function() {
-      jQuery(this).closest('.message').transition('fade');
-      window.location.href = createHubUrl;
+   
+    jQuery('.card .image').dimmer({
+      on: 'hover'
     });
    
    });
@@ -127,10 +115,6 @@
    
   const redirectTo = (viewUrl) => {
     window.location.href = viewUrl;
-  }
-
-  const createHub = (createUrl) => {
-    window.location.href = createUrl;
   }
 
   const deleteConfirmation = (hubId,hubName) => {
@@ -152,7 +136,7 @@
     }else{
       jQuery.ajax({
         type: "POST",
-        url: "<?php echo plugin_dir_url( __FILE__ ).'../actions/delete_hub.php'; ?>",
+        url: "<?php echo plugin_dir_url( __FILE__ ).'../../actions/delete_hub.php'; ?>",
         data: {action: 'delete', hub_id, isDeleteAttachment},
         success: function (data, status){
           jQuery('.deleteHub').modal('hide');
@@ -168,7 +152,7 @@
 
   const viewHubWithModal = (hub_id) => {
     let location = location_data[hub_id];
-    let viewLocationUrl = "<?= admin_url('/admin.php?page=pukpun_locations&hub_id')?>";
+    let viewLocationUrl = "<?= admin_url('/admin.php?page=pukpun_routes&hub_id')?>";
     jQuery("#viewHubHeader").text(location.hub_name);
     jQuery("#address_val").text(location.hub_address);
     jQuery("#coordinate_val").text(location.hub_coordinate);

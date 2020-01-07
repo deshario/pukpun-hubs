@@ -1,4 +1,4 @@
-<div class="ui special cards" style="">
+<div class="ui cards" style="">
    <?php
       global $wpdb;
       $tbl_pp_location = $wpdb->prefix.'pukpun_locations';
@@ -11,14 +11,9 @@
 
       function renderNotification($title,$message){
         echo "
-          <div class='ui icon info message' style='width:98%;'>
-            <i class='exclamation icon'></i>
-            <div class='content'>
-              <div class='header'>$title</div>
-              <div class='description' style='margin-top:5px;'>$message</div>
-            </div>
-            <i class='close icon'></i>
-          </div> 
+          <h2 class='ui center aligned icon header' style='margin-top:25px;'>
+            <i class='bullhorn icon'></i> $title
+          </h2>
         ";
       }
 
@@ -76,51 +71,41 @@
         $mIndex++; }
       }
 
+      function changeTitle($title){
+        echo "<script>jQuery('#locationTitle').text('$title Locations');</script>";
+      }
+
       $singleHub = '';
 
+      $notfound = false;
       if(isset($_GET['hub_id'])){ // Single Hub
         $sqlQuery = "SELECT * FROM $tbl_pp_location 
           INNER JOIN $tbl_pp_hubs ON $tbl_pp_hubs.hub_id = $tbl_pp_location.hub_id
-          WHERE $tbl_pp_location.hub_id = ".$_GET['hub_id'];
+          WHERE $tbl_pp_location.hub_id = ".$_GET['hub_id']." AND isPrecarious = '0'";
         $locations = $wpdb->get_results($sqlQuery);
         if(count($locations) <= 0){
-          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
-          renderNotification('Invalid Location','Something went wrong !');
-          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
+          renderNotification('Invalid Route','Something went wrong !');
         }else{
           $singleHub = $locations[0]->hub_name;
         }
       }else{
-        $locations = $wpdb->get_results("SELECT * FROM $tbl_pp_location");
+        $locations = $wpdb->get_results("SELECT * FROM $tbl_pp_location WHERE isPrecarious = '0'");
         if(count($locations) <= 0){
-          $createLocationUrl = '"'.admin_url('/admin.php?page=pukpun_locations-new').'"';
-          echo "<script>var createLocationUrl = ".$createLocationUrl."</script>";
-          $msg = "Click <a href='#' onclick='createLocation(".$createLocationUrl.")'>here</a> to create your first location";
-          renderNotification('Location Not Found',$msg);
+          renderNotification('Route Not Found',$msg);
+          $notfound = true;
         }
       }
 
-      if($singleHub != ''){
-          echo "
-            <div class='ui segment' style='width:99%; margin-top: 25px; margin-right: 20px;'>
-            <h2 class='ui left floated header' style='padding-left:10px;'>$singleHub Locations</h2>
-            <div class='ui clearing divider'></div>
-            <div class='ui cards' style='padding-left: 10px; padding-right: 5px;'>
-          ";
-      }else{
-          echo "
-            <div class='ui segment' style='width:99%; margin-top: 25px; margin-right: 20px;'>
-            <h2 class='ui left floated header' style='padding-left:10px;'>Locations</h2>
-            <div class='ui clearing divider'></div>
-            <div class='ui cards' style='padding-left: 10px; padding-right: 5px;'>
-          ";
+      if($notfound == false){
+        if($singleHub != ''){
+          changeTitle($singleHub);
+        }
       }
+
   ?>
 
   <?= renderTabData($locations); ?>
 
-</div>
-</div>
 </div>
 
 <div class="ui modal viewModal">
@@ -140,11 +125,9 @@
   </div>
 </div>
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?= $apiKey ?>&libraries=drawing"></script>
-
 <script type="module">
 
-  import uberMapStyle from "<?php echo plugin_dir_url( __FILE__ ).'../assets/js/mapStyle.js'; ?>";
+  import uberMapStyle from "<?= plugin_dir_url( __FILE__ ).'../../assets/js/mapStyle.js'; ?>";
 
   jQuery(document).ready(() => {
 
@@ -152,63 +135,15 @@
 
     jQuery('.top.menu .attachedTab').tab({
       'onVisible':function(){
-        alert("Called")
-        filterSelection('unattachedHub');
+        alert("Called");
       }
     });
     
-
-    jQuery('.special.cards .image').dimmer({
+    jQuery('.card .image').dimmer({
       on: 'hover'
     });
-    jQuery('.message .close').on('click', function() {
-      jQuery(this).closest('.message').transition('fade');
-      window.location.href = createLocationUrl;
-    });
+
   });
-
-
-
-
-
-
-  window.filterSelection = function(c) {
-  var x, i;
-  x = document.getElementsByClassName("carditem");
-  if (c == "all") c = "";
-  for (i = 0; i < x.length; i++) {
-    w3RemoveClass(x[i], "show");
-    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-  }
-}
-
-window.w3AddClass = function(element, name) {
-  var i, arr1, arr2;
-  arr1 = element.className.split(" ");
-  arr2 = name.split(" ");
-  for (i = 0; i < arr2.length; i++) {
-    if (arr1.indexOf(arr2[i]) == -1) {
-      // element.className += " " + arr2[i];
-      element.style.display = 'block';
-    }
-  }
-  console.log('Adding Class');
-}
-
-window.w3RemoveClass = function(element, name) {
-  var i, arr1, arr2;
-  arr1 = element.className.split(" ");
-  arr2 = name.split(" ");
-  for (i = 0; i < arr2.length; i++) {
-    while (arr1.indexOf(arr2[i]) > -1) {
-      arr1.splice(arr1.indexOf(arr2[i]), 1);     
-    }
-  }
-  element.className = arr1.join(" ");
-  element.style.display = 'none';
-  console.log('removed');
-}
-
  
   window.createLocation = function(createUrl){
     window.location.href = createUrl;
@@ -221,7 +156,7 @@ window.w3RemoveClass = function(element, name) {
     }else{
       jQuery.ajax({
         type: "POST",
-        url: "<?php echo plugin_dir_url( __FILE__ ).'../actions/delete_location.php'; ?>",
+        url: "<?php echo plugin_dir_url( __FILE__ ).'../../actions/delete_location.php'; ?>",
         data: {action: 'delete', location_id},
         success: function (data, status){
           jQuery('.deleteModal').modal('hide');
@@ -246,8 +181,8 @@ window.w3RemoveClass = function(element, name) {
   }
 
   window.updateLoc = function(locationID){
-    let url = "<?php echo admin_url('admin.php?page=pukpun_locations'); ?>";
-    url = url+"&editLocation="+locationID;
+    let url = "<?php echo admin_url('admin.php?page=pukpun_routes'); ?>";
+    url = url+"&editRoute="+locationID;
     window.location.href = url;
   }
    
@@ -281,6 +216,5 @@ window.w3RemoveClass = function(element, name) {
     map.fitBounds(latlngbounds);
     triangle.setMap(map);
   }
-
   
 </script>

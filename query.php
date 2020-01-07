@@ -19,11 +19,13 @@
 
       $sqlQuery = "SELECT * FROM $locations WHERE $locations.hub_id = ".$eachHub->hub_id;
       $eachHubData = $wpdb->get_results($sqlQuery);
+
       foreach($eachHubData as $data){
         $hubLocation = array();
         $hubLocation['location_id'] = $data->location_id;
         $hubLocation['location_name'] = $data->location_name;
         $hubLocation['location_data'] = $data->location_data;
+        $hubLocation['isPrecarious'] = $data->isPrecarious;
         array_push($allLocations,$hubLocation);
       }
 
@@ -35,7 +37,7 @@
       $myHubs->created_at = $eachHub->hub_created_at;
       $myHubs->updated_at = $eachHub->hub_updated_at;
       array_push($finalHubs,$myHubs);
-
+      $allLocations = [];
     }
 
   }

@@ -39,7 +39,7 @@
         }else{
           $countName = $wpdb->get_var("SELECT COUNT(*) FROM $tbl_pp_location WHERE location_name = '".$_POST['locationName']."'");
           if($countName > 0){
-            handleError("The location name already exists.");
+            handleError("The route name already exists.");
           }else{
             $isFormOk = true;
           }
@@ -59,7 +59,7 @@
         ),
         array('%s','%s','%s','%s')
       );
-      wp_redirect(admin_url('/admin.php?page=pukpun_locations'));
+      wp_redirect(admin_url('/admin.php?page=pukpun_routes'));
     }else{
       echo "<script>console.log('No POST')</script>";
     }
@@ -67,67 +67,58 @@
 
 ?>
 
-<div class="ui grid" style="margin-top:10px; padding-right:5px; margin-right:0;">
-   <div class="wide column">
+<div class="ui fluid" style="padding:10px 10px 30px 10px;">
 
    <form method="post" action="">
-      <div class="ui card fluid">
-         <div class="content">
-            <i class="map marker alternate icon"></i>Create Location
-         </div>
-         <div class="content">
-            <div class="ui form">
-               <div class="field">
-                  <label>Location Name</label>
-                  <input type="text" name="locationName" placeholder="" required/>
-               </div>
-               <div class="field">
-                  <label>Attach Hub</label>
-                  <select name="attachedHub" class="label ui selection fluid dropdown">
-                    <option value="">Select Hub</option>
-                    <?php
-                      $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
-                      $pukpunHubData = $wpdb->get_results("SELECT * FROM $tbl_pp_hubs");
-                        foreach($pukpunHubData as $eachLocation){
-                          echo "<option value='$eachLocation->hub_id'>".$eachLocation->hub_name."</option>";
-                        }
-                    ?>
-                  </select>
-               </div>
-               <div class="field">
-                  <label>Draw Polygon</label>
-                  <div style="border:1px solid rgba(34,36,38,.1); padding:5px;">
-                     <div id="googleMapper" style="width:100%; height:500px;"></div>
-                  </div>
-               </div>
-               <div class="ui accordion field">
-                  <div class="title active">
-                    <i class="icon dropdown"></i> Polygon Data
-                  </div>
-                  <div class="content field">
-                     <div class="field" style="margin-left: 20px; margin-top: -5px;">
-                        <textarea name="locationData" rows="10" id="hub_data" style="resize:none;" readonly></textarea>
-                     </div>
-                  </div>
-               </div>
+      <div class="content">
+        <div class="ui form">
+            <div class="field">
+              <label>Route Name</label>
+              <input type="text" name="locationName" placeholder="" required/>
             </div>
-         </div>
-         <div class="extra content">
-            <input type="hidden" id="hub_id" name="hub_id" value="<?php echo $hub_id;?>" />
-            <input type="submit" class="ui right floated primary button" style="padding-top:7px;" name="create"/>
-            <button class="clearBtn ui right floated red button" style="padding-top:7px;">Clear</button>
-         </div>
+            <div class="field">
+              <label>Attach Hub</label>
+              <select name="attachedHub" class="label ui selection fluid dropdown">
+                <option value="">Select Hub</option>
+                <?php
+                  $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
+                  $pukpunHubData = $wpdb->get_results("SELECT * FROM $tbl_pp_hubs");
+                    foreach($pukpunHubData as $eachLocation){
+                      echo "<option value='$eachLocation->hub_id'>".$eachLocation->hub_name."</option>";
+                    }
+                ?>
+              </select>
+            </div>
+            <div class="field">
+              <label>Draw Polygon</label>
+              <div style="border:1px solid rgba(34,36,38,.1); padding:5px;">
+                  <div id="googleMapper" style="width:100%; height:500px;"></div>
+              </div>
+            </div>
+            <div class="ui accordion field">
+              <div class="title active">
+                <i class="icon dropdown"></i> Polygon Data
+              </div>
+              <div class="content field">
+                  <div class="field" style="margin-left: 20px; margin-top: -5px;">
+                    <textarea name="locationData" rows="10" id="hub_data" style="resize:none;" readonly></textarea>
+                  </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="extra content">
+        <input type="hidden" id="hub_id" name="hub_id" value="<?php echo $hub_id;?>" />
+        <input type="submit" class="ui right floated primary button" style="padding-top:7px;" name="create"/>
+        <button class="clearBtn ui right floated red button" style="padding-top:7px;">Clear</button>
       </div>
     </form>
   
-   </div>
 </div>
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?= $apiKey ?>&libraries=drawing"></script>
-      
 <script type="module">
 
-  import uberMapStyle from "<?php echo plugin_dir_url( __FILE__ ).'../assets/js/mapStyle.js'; ?>";
+import uberMapStyle from "<?= plugin_dir_url( __FILE__ ).'../../assets/js/mapStyle.js'; ?>";
 
   const getJSONString = (jsonObject) => {
     let simplifiedData = JSON.stringify(jsonObject);

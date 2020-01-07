@@ -19,7 +19,8 @@
   }
 
   if($oldKey == ''){
-    showNotification('API KEY REQUIRED','Enter key to make hubs and locations working properly.');
+    $apiKeyUrl = "https://developers.google.com/maps/documentation/javascript/get-api-key";
+    showNotification('API KEY REQUIRED','Register your <a href="'.$apiKeyUrl.'" target="_blank"><u>key</u></a> to make hubs and routes working properly.');
   }
 
   function showNotification($title,$message){ 
@@ -89,7 +90,9 @@
    </div>
 </div>
 
-<script>
+<script type="module">
+
+  import * as pukpunRoot from "<?php echo get_stylesheet_directory_uri() . '/assets/js/pukpun.js' ?>";
 
   jQuery(document).ready(() => {
     jQuery('.menu .item').tab();
@@ -98,35 +101,16 @@
     });
   });
 
-  const getParsedData = (response) => {
-    let finalTotalHubs = JSON.parse(response); 
-    var pukpunHubs = [];
-    finalTotalHubs.forEach((eachHub) => {
-      let locationData = eachHub.data.map((eachLocation) => {
-        let data = '{"data":['+eachLocation.location_data.replace(/(lat|lng)/g, '"$1"')+']}';
-        let locationData = {
-          id : eachLocation.location_id,
-          name : eachLocation.location_name,
-          data : JSON.parse(data)
-        };
-        return locationData;
-      });
-      pukpunHubs.push({
-        name : eachHub.name,
-        latlong : eachHub.coordinate,
-        locations : locationData
-      });
-    });
-    return pukpunHubs;
-  }
 
-  const fetchData = () => {
+  window.fetchData = function(){
     jQuery.ajax({
       url: "<?php echo plugin_dir_url(__DIR__).'query.php'; ?>",
       type: "GET",
       success: function (response){
-        let data = getParsedData(response);
-        console.log(data);
+        let data = pukpunRoot.getParsedPrecariousData(response,true);
+        let Pdata = pukpunRoot.getParsedPrecariousData(response,false);
+        console.log('data',data);
+        console.log('Pdata',Pdata);
         alert('Please check console');
       },
       error: function(jqXHR, textStatus, errorThrown) {

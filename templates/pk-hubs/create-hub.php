@@ -23,7 +23,7 @@
       }
 
       if($readyToInsert){
-         $uploadedMediaId = media_handle_upload('hubCover',0); // return int | media ID
+         $uploadedMediaId = media_handle_upload('hubCover',0); // return int |  ID
          if(is_wp_error($uploadedMediaId)){
             echo "Error uploading file: " . $uploadedMediaId->get_error_message().'<br/>';
          }
@@ -35,8 +35,7 @@
                'hub_address' => $_POST['hubAddress'],
                'hub_opening' => $_POST['hubOpening'],
                'hub_cover' => $uploadedMediaId
-            ),
-            array('%s','%s','%s')
+            )
          );
          wp_redirect(admin_url('/admin.php?page=pukpun_hubs'));
       }
@@ -58,39 +57,34 @@
 
 ?>
 
-<div class="ui grid" style="margin-top:10px; padding-right:5px; margin-right:0;">
+<div class="ui fluid" style="padding:10px 10px 30px 10px;">
    <div class="wide column">
       <form method="post" id="hubForm" action="#" enctype="multipart/form-data">
-         <div class="ui card fluid">
-            <div class="content">
-               <i class="map marker alternate icon"></i>Create Hub
-            </div>
-            <div class="content">
-               <div class="ui form">
-                  <div class="field">
-                     <label>Hub Name</label>
-                     <input type="text" name="hubName" placeholder="Ramintra" required/>
-                  </div>
-                  <div class="field">
-                     <label>Hub Coordinates</label>
-                     <input type="text" name="hubCoordinate" placeholder="14.87623,19.324786" required/>
-                  </div>
-                  <div class="field">
-                     <label>Hub Address</label>
-                     <textarea rows="2" name="hubAddress" style="resize:none" required></textarea>
-                  </div>
-                  <div class="field">
-                     <label>Hub Opening Time</label>
-                     <input type="text" name="hubOpening" placeholder="06.00 - 18.00" required/>
-                  </div>
-                  <div class="field">
-                     <label>Hub Cover</label>
-                     <input type="file" name="hubCover" accept="image/*" required/>
-                  </div>
-                  <input type="hidden" id="locations_ids" name="locations_ids"/>
-                  <input type="submit" name="createHub" class="ui right floated primary button" style="padding-top:7px;" />
-                  <button class="clearBtn ui right floated red button" style="padding-top:7px;">Clear</button>
+         <div class="content">
+            <div class="ui form">
+               <div class="field">
+                  <label>Hub Name</label>
+                  <input type="text" name="hubName" placeholder="Ramintra" required/>
                </div>
+               <div class="field">
+                  <label>Hub Coordinates</label>
+                  <input type="text" name="hubCoordinate" placeholder="14.87623,19.324786" required/>
+               </div>
+               <div class="field">
+                  <label>Hub Address</label>
+                  <textarea rows="2" name="hubAddress" style="resize:none" required></textarea>
+               </div>
+               <div class="field">
+                  <label>Hub Opening Time</label>
+                  <input type="text" name="hubOpening" placeholder="06.00 - 18.00" required/>
+               </div>
+               <div class="field">
+                  <label>Hub Cover</label>
+                  <input type="file" name="hubCover" accept="image/*" required/>
+               </div>
+               <input type="hidden" id="locations_ids" name="locations_ids"/>
+               <input type="submit" name="createHub" class="ui right floated primary button" style="padding-top:7px;" />
+               <button class="clearBtn ui right floated red button" style="padding-top:7px;">Clear</button>
             </div>
          </div>
       </form>
