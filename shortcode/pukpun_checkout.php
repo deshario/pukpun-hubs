@@ -1,10 +1,9 @@
 <?php
 
-    $layout = "<div id='map' style='margin-bottom:20px;'>ee</div>";
-
-    $mapDataLength = '';
-
     global $wpdb;
+
+    $layout = "<div id='map' style='margin-bottom:20px;'></div>";
+
     $settings_tbl = $wpdb->prefix.'pukpun_settings';
     $result = $wpdb->get_row("SELECT * FROM $settings_tbl WHERE key_name = 'query_api'");
     $queryUrl = $result->key_value;
@@ -197,7 +196,7 @@
 
         inputer.addEventListener('change', (event) => {
             if(event.target.checked){
-                triangle.setOptions({
+                precariousPolygon.setOptions({
                     strokeColor: "#FF0000",
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
@@ -205,7 +204,7 @@
                     fillOpacity: 0.35
                 });
             }else{
-                triangle.setOptions({
+                precariousPolygon.setOptions({
                     strokeColor: "#ffffff00",
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
@@ -379,7 +378,7 @@
 
             var totalShippingCost = 0;
 
-            if(foundHub != null && foundHub.found_location.isPrecarious == '0'){
+            if(foundHub != null){
 
                 console.log('foundHub :',foundHub);
 
@@ -428,13 +427,15 @@
                     jQuery('#billing_state').val(dropper).trigger('change');
                 },1000);
 
-            }else if(foundHub != null && foundHub.found_location.isPrecarious == '1'){
-                console.log('Precarious Found');    
-                // localStorage.setItem("isfoundPrecarious", foundHub.hub_name);
+                if(foundHub.found_location.isPrecarious == '1'){
+                    console.log('Precarious Found');
+                    document.getElementById("is_precarious").value = 1;
+                }
+
             }else{
+
                 localStorage.setItem("foundHub",'');
                 localStorage.setItem("foundHubPrice", 0);
-                // console.log('loadMapTime',loadMapTime);
                 console.log('Hub : Not found');
                 let tempRadios = getRadioSelection(1);
                 document.getElementById(tempRadios.bicycle).checked = true; // De-Select Bicycle
@@ -495,6 +496,8 @@
         //     lng: 2.1455
         // }
     };
+
+    console.log('unPrecariousHubs=> ',unPrecariousHubs.length);
 
     if(unPrecariousHubs.length > 0){
 
@@ -582,30 +585,16 @@
                 billingPostcode:'<?= $billingPostcode ?>'
             });
         }
+
+    }else{
+        jQuery("#map").remove();
+        let radioID = pukpunRoot.getRadioSelection(1);
+        document.getElementById(radioID.bicycle).checked = false;
+        document.getElementById(radioID.postal).checked = false;
+        document.getElementById(radioID.local_pickup).checked = false;
+        document.getElementById(radioID.bicycle).parentElement.remove();
     }
-
-    console.log('lengther',unPrecariousHubs.length);
-
-    const setter = (len) => {
-        var aaaa = 11;
-        <?php $mapDataLength = "<script>document.write(aaaa)</script>"?>
-        console.log(len);
-    }
-
-    setter(unPrecariousHubs.length);
 
 </script>
 
-<?php
-
-    // echo 'mapDataLength => '.$mapDataLength;
-    // if($showMap == true){
-    //     // echo $layout;
-    //     echo '<h1>YES MAP</h1>';
-
-    // }else{
-    //     echo '<h1>NO MAP</h1>';
-    // }
-?>
-
-<?php echo $mapDataLength;?>
+<?= $layout; ?>
