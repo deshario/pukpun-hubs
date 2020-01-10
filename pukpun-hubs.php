@@ -34,6 +34,7 @@
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryHub);
+      $wpdb->query("ALTER TABLE $tbl_pukpun_hub CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci");
     }
 
     $tbl_pukpun_location = $wpdb->prefix.'pukpun_locations';
@@ -52,6 +53,7 @@
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryLocation);
+      $wpdb->query("ALTER TABLE $tbl_pukpun_location CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci");
     }
 
     $tbl_pukpun_log = $wpdb->prefix.'pukpun_logs';
@@ -66,6 +68,7 @@
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($queryHubData);
+      $wpdb->query("ALTER TABLE $tbl_pukpun_log CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci");
     }
 
     $tbl_pukpun_settings = $wpdb->prefix.'pukpun_settings';
@@ -78,6 +81,7 @@
       );";
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($querySetting);
+      $wpdb->query("ALTER TABLE $tbl_pukpun_settings CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci");
     }
     
   }

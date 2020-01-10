@@ -40,10 +40,10 @@
                   </div>
                 </div>
             </div>
-            <img src="<?= $cover[0]; ?>">
+            <img src="<?= $cover[0]; ?>" style='height:225px'>
           </div>
           <div class="content">
-            <a class="header" onclick="viewHubWithModal(<?= $hub->hub_id; ?>)"><?= $hub->hub_name;?></a>
+            <a class="header" onclick="viewHubWithModal(<?= $hub->hub_id; ?>,<?= "'".$cover[0]."'"; ?>)"><?= $hub->hub_name;?></a>
           </div>
           <div class="extra content">
           <a><i class="map marker alternate icon"></i><?= $routeLabel; ?></a>
@@ -74,7 +74,7 @@
   <div class="header" id="viewHubHeader"></div>
   <div class="image content" style='padding:15px;'>
     <div class="ui medium image">
-      <img src="http://localhost:8080/wordpress/wp-content/uploads/2019/12/GCk9kqTURBXy9kNDEzZThiNDM4MzMyYzcyN2QxNTJmODJiOTM4NWQ4MC5qcGVnkpUDAADNB4DNBDiTBc0HgM0EOIGhMAE-2.png">
+      <img id='viewImgSrc'/>
     </div>
     <div class="description">
         <p style='font-size:17px;'>Address : <a class='noAstyle' id='address_val'></a></p>
@@ -150,7 +150,7 @@
     }
   }
 
-  const viewHubWithModal = (hub_id) => {
+  const viewHubWithModal = (hub_id,logo) => {
     let location = location_data[hub_id];
     let viewLocationUrl = "<?= admin_url('/admin.php?page=pukpun_routes&hub_id')?>";
     jQuery("#viewHubHeader").text(location.hub_name);
@@ -158,6 +158,7 @@
     jQuery("#coordinate_val").text(location.hub_coordinate);
     jQuery("#created_val").text(location.hub_created_at);
     jQuery("#opentime_val").text(location.hub_opening);
+    jQuery("#viewImgSrc").attr("src",logo);
     jQuery('.noAstyle').css(
       {'color': 'black'}
     );
@@ -172,5 +173,3 @@
   }
 
 </script>
-
-
