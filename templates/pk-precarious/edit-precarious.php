@@ -160,6 +160,9 @@
     }
     let centerLatlng = bounds.getCenter();
 
+    let materialColors = ['#F44336','#E91E63','#9C27B0','#673AB7','#4CAF50','#FF9800','#3F51B5','#795548'];
+    let randomColor = materialColors[Math.floor(Math.random() * materialColors.length)];
+
     var mapObject = {
       "tilt": 0,
       "mapTypeId": "hybrid",
@@ -168,9 +171,9 @@
         "type": "polygon",
         "title": "",
         "content": "",
-        "fillColor": "#000000",
+        "fillColor": randomColor,
         "fillOpacity": 0.3,
-        "strokeColor": "#000000",
+        "strokeColor": randomColor,
         "strokeOpacity": 0.9,
         "strokeWeight": 3,
         "paths": [

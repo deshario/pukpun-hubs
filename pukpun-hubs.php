@@ -36,7 +36,7 @@
       dbDelta($queryHub);
     }
 
-    $tbl_pukpun_location = $wpdb->prefix.'pukpun_routes';
+    $tbl_pukpun_location = $wpdb->prefix.'pukpun_locations';
     if($wpdb->get_var("SHOW TABLES LIKE '$tbl_pukpun_location'") != $tbl_pukpun_location){
       $hubTbl = $wpdb->prefix.'pukpun_hubs';
       $queryLocation = "CREATE TABLE $tbl_pukpun_location (

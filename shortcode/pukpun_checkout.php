@@ -36,7 +36,7 @@
     }
 
     const getNearestHub = () => {
-        console.log('Selecting Nearest Hub');
+        // console.log('Selecting Nearest Hub');
         getPosition().then((position) => {
             let mLatlng = {
                 lat : position.coords.latitude,
@@ -105,7 +105,7 @@
 
     const manageShippingSelection = () => {
         let selectedRadio = jQuery("input[name='shipping_method[0]']:checked").val();
-        let radioNames = getRadioSelection(2); // 2 getName
+        let radioNames = pukpunRoot.getRadioSelection(2); // 2 getName
         if(selectedRadio == radioNames.bicycle){
             jQuery('#store_pickup_field').fadeOut();
             jQuery('#map').fadeIn();
@@ -171,7 +171,7 @@
             strokeOpacity: 1,
             strokeWeight: 3,
             fillColor: "#000000",
-            fillOpacity: 0.7
+            fillOpacity: 0.5
         });
 
         precariousPolygon.setMap(picker.map);
@@ -203,8 +203,22 @@
                     fillColor: "#FF0000",
                     fillOpacity: 0.35
                 });
+                unPrecariousPolygon.setOptions({
+                    strokeColor: "#000000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#000000",
+                    fillOpacity: 0.35
+                });
             }else{
                 precariousPolygon.setOptions({
+                    strokeColor: "#ffffff00",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#ffffff00",
+                    fillOpacity: 0.35
+                });
+                unPrecariousPolygon.setOptions({
                     strokeColor: "#ffffff00",
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
@@ -278,7 +292,7 @@
                     }
 
                     let selectedRadio = jQuery("input[name='shipping_method[0]']:checked").val();
-                    let radioNames = getRadioSelection(2); // 2 getName
+                    let radioNames = pukpunRoot.getRadioSelection(2); // 2 getName
                     if (results[1] && loadTime > 2 && selectedRadio == radioNames.bicycle){
                         let tempAddress = pukpunRoot.placeToAddress(results[1]);
 
@@ -437,7 +451,7 @@
                 localStorage.setItem("foundHub",'');
                 localStorage.setItem("foundHubPrice", 0);
                 console.log('Hub : Not found');
-                let tempRadios = getRadioSelection(1);
+                let tempRadios = pukpunRoot.getRadioSelection(1);
                 document.getElementById(tempRadios.bicycle).checked = true; // De-Select Bicycle
                 document.getElementById(tempRadios.postal).checked = false; // Select postal
                 document.getElementById(tempRadios.local_pickup).checked = false; // De-Select Self Pickup
@@ -497,8 +511,6 @@
         // }
     };
 
-    console.log('unPrecariousHubs=> ',unPrecariousHubs.length);
-
     if(unPrecariousHubs.length > 0){
 
         getNearestHub();
@@ -510,7 +522,7 @@
             let eachDistance = pukpunRoot.calculateDistance(userlatlng.lat,userlatlng.lng,latlng[0],latlng[1],'K');
             hubDistance.push({hubName:eachHub.name, hubDistance:eachDistance});
         });
-        console.log('hubwithDistance',hubDistance);
+        // console.log('hubwithDistance',hubDistance);
         let nearestHub = hubDistance.reduce(function(res, obj) {
             return (obj.hubDistance < res.hubDistance) ? obj : res;
         });
