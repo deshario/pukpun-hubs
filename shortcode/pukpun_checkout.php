@@ -158,19 +158,19 @@
 
         var precariousPolygon = new google.maps.Polygon({
             paths: precariousRoadLines,
-            strokeColor: "#E91E63",
+            strokeColor: "#ffffff00",
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: "#E91E63",
+            fillColor: "#ffffff00",
             fillOpacity: 0.35
         });
 
         var unPrecariousPolygon = new google.maps.Polygon({
             paths: unPrecariousRoadLines,
-            strokeColor: "#000000",
+            strokeColor: "#ffffff00",
             strokeOpacity: 1,
             strokeWeight: 3,
-            fillColor: "#000000",
+            fillColor: "#ffffff00",
             fillOpacity: 0.5
         });
 
@@ -185,7 +185,7 @@
 
         var inputer = document.createElement("INPUT");
         inputer.setAttribute("type", "checkbox");
-        inputer.checked = true;
+        inputer.checked = false;
 
         var spaner = document.createElement("SPAN");
         spaner.classList.add("slider", "round");
@@ -443,6 +443,7 @@
 
                 if(foundHub.found_location.isPrecarious == '1'){
                     console.log('Precarious Found');
+                    alert('Precarious Found');
                     document.getElementById("is_precarious").value = 1;
                 }
 
