@@ -5,7 +5,7 @@ Create pukpun hubs, delivery routes and handle custom shipping cost by distance 
 ### Functionalities
 - Crud Hub
 - Crud Route (Draw Polygon via GoogleMap)
-- Assign each route to hub
+- Connect each route with hub
 - Use Custom Formula to calculate shipping cost which depend on product types
 - Pickup location point from checkout page (GoogleMap)
 - Shipping cost depend on each hub and each route
