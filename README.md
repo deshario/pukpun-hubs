@@ -1,13 +1,13 @@
 # PukPun Hubs
 
-Create pukpun hubs, delivery routes and handle custom shipping cost by distance of each routes and muych more condition likka product type, category, promotions and much more
+Create pukpun hubs, delivery routes and handle custom shipping cost by distance of each routes and muych more condition likka product type, category, promotions and much more.
 
 ### Functionalities
 - Crud Hub
-- Crud Route <Draw Polygon via GoogleMap>
+- Crud Route (Draw Polygon via GoogleMap)
 - Assign each route to hub
 - Use Custom Formula to calculate shipping cost which depend on product types
-- Pickup location point from checkout page <GoogleMap>
+- Pickup location point from checkout page (GoogleMap)
 - Shipping cost depend on each hub and each route
 
 ### Backend
