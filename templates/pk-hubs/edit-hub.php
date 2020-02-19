@@ -25,6 +25,7 @@
     global $wpdb;
     $hubName = $_POST['hubName'];
     $hubCoordinate = $_POST['hubCoordinate'];
+    $hubOldCover = $_POST['old_cover'];
     $readyToUpdate = true;
 
     if($pukpunHub->hub_name != $hubName){
@@ -48,11 +49,17 @@
     if($readyToUpdate){
       global $wpdb;
       $tbl_pp_hubs = $wpdb->prefix.'pukpun_hubs';
+      $uploadedMediaId = media_handle_upload('hubCover',0); // return int |  ID
+      if(is_wp_error($uploadedMediaId)){
+        echo "Error uploading file: " . $uploadedMediaId->get_error_message().'<br/>';
+        $uploadedMediaId = $hubOldCover;
+      } 
       $result = $wpdb->update($tbl_pp_hubs,
         array(
           'hub_name' => $hubName,
           'hub_coordinate' => $hubCoordinate,
           'hub_address' => $_POST['hubAddress'],
+          'hub_cover' => $uploadedMediaId,
           'hub_opening' => $_POST['hubOpening'],
           'hub_updated_at' => date("Y-m-d"),
         ),array('hub_id' => $_GET['editHub'])
@@ -103,6 +110,15 @@
                      <label>Hub Opening Time</label>
                      <input type="text" name="hubOpening" value="<?= $pukpunHub->hub_opening; ?>" required/>
                   </div>
+                  <div class="field">
+                    <label>Hub Cover
+                    <input type="file" name="hubCover" accept="image/*"/>
+                    <div class="ui pointing blue basic label">
+                      Upload new cover to replace old one
+                    </div>
+                    </label>
+                  </div>
+                  <input type="hidden" id="old_cover" name="old_cover" value="<?= $pukpunHub->hub_cover; ?>"/>
                   <input type="submit" name="updateHub" class="ui right floated primary button" style="padding-top:7px;" />
                   <button class="clearBtn ui right floated red button" style="padding-top:7px;">Clear</button>
                </div>

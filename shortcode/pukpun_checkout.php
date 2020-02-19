@@ -35,18 +35,21 @@
         });
     }
 
-    const getNearestHub = () => {
-        // console.log('Selecting Nearest Hub');
-        getPosition().then((position) => {
-            let mLatlng = {
-                lat : position.coords.latitude,
-                lng : position.coords.longitude
-            };
-            localStorage.setItem("device_latlng", JSON.stringify(mLatlng));
-        }).catch((err) => {
-            console.error(err.message);
-            alert('Please check location permission and try again.');
-        });
+    const getNearestHub = async () => {
+        try{
+            let position = await getPosition();
+            if(position != null){
+                let mLatlng = {
+                    lat : position.coords.latitude,
+                    lng : position.coords.longitude
+                };
+                localStorage.setItem("device_latlng", JSON.stringify(mLatlng));
+            }
+        }catch(err){
+            if(err.message = "User denied Geolocation"){
+                alert('Please check location permission and try again.');
+            }
+        }
     }
 
 </script>
@@ -514,21 +517,29 @@
 
     if(unPrecariousHubs.length > 0){
 
-        getNearestHub();
+        (async function() {
+            await getNearestHub();
+        })();
 
-        let userlatlng = JSON.parse(localStorage.getItem("device_latlng"));
-        let hubDistance = [];
-        unPrecariousHubs.forEach((eachHub) => {
-            let latlng = eachHub.latlong.split(',');
-            let eachDistance = pukpunRoot.calculateDistance(userlatlng.lat,userlatlng.lng,latlng[0],latlng[1],'K');
-            hubDistance.push({hubName:eachHub.name, hubDistance:eachDistance});
-        });
-        // console.log('hubwithDistance',hubDistance);
-        let nearestHub = hubDistance.reduce(function(res, obj) {
-            return (obj.hubDistance < res.hubDistance) ? obj : res;
-        });
-        console.log('nearestHub',nearestHub);
-        jQuery("#store_pickup").val(nearestHub.hubName);
+        let deviceLatlng = localStorage.getItem("device_latlng") || null;
+        if(deviceLatlng != null){
+            let userlatlng = JSON.parse(deviceLatlng);
+            console.log('Current => ',userlatlng);
+            let hubDistance = [];
+            unPrecariousHubs.forEach((eachHub) => {
+                let latlng = eachHub.latlong.split(',');
+                let eachDistance = pukpunRoot.calculateDistance(userlatlng.lat,userlatlng.lng,latlng[0],latlng[1],'K');
+                hubDistance.push({hubName:eachHub.name, hubDistance:eachDistance});
+            });
+            // console.log('hubwithDistance',hubDistance);
+            let nearestHub = hubDistance.reduce(function(res, obj) {
+                return (obj.hubDistance < res.hubDistance) ? obj : res;
+            });
+            console.log('nearestHub',nearestHub);
+            jQuery("#store_pickup").val(nearestHub.hubName);
+        }else{
+            console.log('Please Check GeoLocation Permission');
+        }
 
         if(provinceCode == ''){ // New User
             getPosition().then((position) => {
@@ -598,9 +609,10 @@
                 billingPostcode:'<?= $billingPostcode ?>'
             });
         }
-
+        jQuery('#bicycle_note').show();
     }else{
         jQuery("#map").remove();
+        jQuery('#bicycle_note').hide();
         let radioID = pukpunRoot.getRadioSelection(1);
         document.getElementById(radioID.bicycle).checked = false;
         document.getElementById(radioID.postal).checked = false;
