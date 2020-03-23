@@ -17,12 +17,23 @@
         ";
       }
 
+      function renderTableData($locations){
+        foreach($locations as $location){ ?>
+        <tr>
+          <td><?= $location->location_name; ?></td>
+          <td><?= $location->location_created_at; ?></td>
+          <td></td>
+        </tr>
+        <?php }
+      }
+
       function renderTabData($locations){
         $mIndex = 0;
         echo "<script>
           var location_name=[];
           var location_data=[];
         </script>"; 
+        
         foreach($locations as $location){ 
           $location_data_string = json_encode($location->location_data);
           $location_name_string = json_encode($location->location_name);
@@ -32,6 +43,7 @@
           </script>";
           $hubIdentifier = $location->hub_id == NULL ? 'border:1px solid #F44336' : '';
         ?>
+
         <div class="ui card" style="<?= $hubIdentifier; ?>">
             <div class="blurring dimmable image">
               <div class="ui dimmer">
@@ -67,6 +79,8 @@
             </div>
 
         </div>
+
+
         <?php 
         $mIndex++; }
       }
@@ -103,6 +117,19 @@
       }
 
   ?>
+
+  <!-- <table class="ui celled table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Created At</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?//= renderTableData($locations); ?>
+  </tbody>
+</table> -->
 
   <?= renderTabData($locations); ?>
 

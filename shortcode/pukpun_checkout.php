@@ -47,7 +47,7 @@
             }
         }catch(err){
             if(err.message = "User denied Geolocation"){
-                alert('Please check location permission and try again.');
+                alert('โปรดตรวจสอบสิทธิในการเข้าถึงตำแหน่งและลองอีกครั้ง');
             }
         }
     }
@@ -180,58 +180,58 @@
         precariousPolygon.setMap(picker.map);
         unPrecariousPolygon.setMap(picker.map);
 
-        var switcher = document.createElement("div");
-        switcher.setAttribute("class", "switcher");
+        // var switcher = document.createElement("div");
+        // switcher.setAttribute("class", "switcher");
 
-        var mSwitch = document.createElement("label");
-        mSwitch.setAttribute("class", "switch");
+        // var mSwitch = document.createElement("label");
+        // mSwitch.setAttribute("class", "switch");
 
-        var inputer = document.createElement("INPUT");
-        inputer.setAttribute("type", "checkbox");
-        inputer.checked = false;
+        // var inputer = document.createElement("INPUT");
+        // inputer.setAttribute("type", "checkbox");
+        // inputer.checked = false;
 
-        var spaner = document.createElement("SPAN");
-        spaner.classList.add("slider", "round");
+        // var spaner = document.createElement("SPAN");
+        // spaner.classList.add("slider", "round");
 
-        mSwitch.appendChild(inputer); 
-        mSwitch.appendChild(spaner); 
-        switcher.appendChild(mSwitch);
+        // mSwitch.appendChild(inputer); 
+        // mSwitch.appendChild(spaner); 
+        // switcher.appendChild(mSwitch);
 
-        inputer.addEventListener('change', (event) => {
-            if(event.target.checked){
-                precariousPolygon.setOptions({
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#FF0000",
-                    fillOpacity: 0.35
-                });
-                unPrecariousPolygon.setOptions({
-                    strokeColor: "#000000",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#000000",
-                    fillOpacity: 0.35
-                });
-            }else{
-                precariousPolygon.setOptions({
-                    strokeColor: "#ffffff00",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#ffffff00",
-                    fillOpacity: 0.35
-                });
-                unPrecariousPolygon.setOptions({
-                    strokeColor: "#ffffff00",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#ffffff00",
-                    fillOpacity: 0.35
-                });
-            }
-        });
+        // inputer.addEventListener('change', (event) => {
+        //     if(event.target.checked){
+        //         precariousPolygon.setOptions({
+        //             strokeColor: "#FF0000",
+        //             strokeOpacity: 0.8,
+        //             strokeWeight: 2,
+        //             fillColor: "#FF0000",
+        //             fillOpacity: 0.35
+        //         });
+        //         unPrecariousPolygon.setOptions({
+        //             strokeColor: "#000000",
+        //             strokeOpacity: 0.8,
+        //             strokeWeight: 2,
+        //             fillColor: "#000000",
+        //             fillOpacity: 0.35
+        //         });
+        //     }else{
+        //         precariousPolygon.setOptions({
+        //             strokeColor: "#ffffff00",
+        //             strokeOpacity: 0.8,
+        //             strokeWeight: 2,
+        //             fillColor: "#ffffff00",
+        //             fillOpacity: 0.35
+        //         });
+        //         unPrecariousPolygon.setOptions({
+        //             strokeColor: "#ffffff00",
+        //             strokeOpacity: 0.8,
+        //             strokeWeight: 2,
+        //             fillColor: "#ffffff00",
+        //             fillOpacity: 0.35
+        //         });
+        //     }
+        // });
 
-        picker.map.controls[google.maps.ControlPosition.TOP_CENTER].push(switcher);
+        // picker.map.controls[google.maps.ControlPosition.TOP_CENTER].push(switcher);
 
         autocomplete.addListener('place_changed', function(){
             infowindow.close();
@@ -359,7 +359,7 @@
                 arr[indexA] = arr[indexB];
                 arr[indexB] = temp;
                 return arr
-                };
+            };
             
             let foundHub = totalHubs.reduce((prevHub,nextHub) => {
                 let store = getIndex(nextHub.data.map(e=>e.location_name), '-')
@@ -401,7 +401,7 @@
 
                 localStorage.setItem("foundHub", foundHub.hub_name);
 
-                jQuery('input[name=selected_hub]').val(foundHub.found_location.location_name+'-'+foundHub.hub_name);
+                jQuery('input[name=selected_hub]').val(foundHub.hub_name+'-'+foundHub.found_location.location_name);
                 
                 let radioID = pukpunRoot.getRadioSelection(1);
                 selectSingleRadio(radioID.bicycle);
@@ -446,7 +446,7 @@
 
                 if(foundHub.found_location.isPrecarious == '1'){
                     console.log('Precarious Found');
-                    alert('Precarious Found');
+                    alert('สถานที่นี้ถูกจัดอยู่ในประเภทหมิ่นเหม่');
                     document.getElementById("is_precarious").value = 1;
                 }
 
@@ -515,6 +515,8 @@
         // }
     };
 
+    console.log('unPrecariousHubs',unPrecariousHubs);
+
     if(unPrecariousHubs.length > 0){
 
         (async function() {
@@ -538,7 +540,7 @@
             console.log('nearestHub',nearestHub);
             jQuery("#store_pickup").val(nearestHub.hubName);
         }else{
-            console.log('Please Check GeoLocation Permission');
+            console.log('โปรดตรวจสอบสิทธิในการเข้าถึงตำแหน่งและลองอีกครั้ง');
         }
 
         if(provinceCode == ''){ // New User

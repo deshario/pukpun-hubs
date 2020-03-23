@@ -85,15 +85,14 @@
     }
     
   }
-  register_activation_hook( __FILE__, 'init_pukpun_hubs_database' );
+  register_activation_hook(__FILE__, 'init_pukpun_hubs_database' );
 
   register_activation_hook(__FILE__, 'my_plugin_activate');
-  add_action('admin_init', 'my_plugin_redirect');
-
   function my_plugin_activate() {
     add_option('pukpun_activation_redirect', true);
   }
 
+  add_action('admin_init', 'my_plugin_redirect');
   function my_plugin_redirect() {
     if (get_option('pukpun_activation_redirect', false)) {
       delete_option('pukpun_activation_redirect');
